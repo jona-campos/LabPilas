@@ -16,6 +16,7 @@ class ActionInput extends StatelessWidget {
     return Column(
       children: [
         TextField(
+          style: const TextStyle(fontSize: 16, color: Colors.white),
           controller: controller,
           decoration: const InputDecoration(
             labelText: "Nueva acción",
