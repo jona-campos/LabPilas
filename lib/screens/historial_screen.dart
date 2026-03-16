@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../models/pilas.dart';
 import '../widget/action_input.dart';
@@ -10,7 +12,6 @@ class HistorialScreen extends StatefulWidget {
 }
 
 class _HistorialScreenState extends State<HistorialScreen> {
-
   final PilaService pila = PilaService();
   final TextEditingController controller = TextEditingController();
 
@@ -37,7 +38,6 @@ class _HistorialScreenState extends State<HistorialScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final historial = pila.historial();
     final ultima = pila.peek();
 
@@ -46,12 +46,9 @@ class _HistorialScreenState extends State<HistorialScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          
           children: [
-
-            ActionInput(
-              controller: controller,
-              onAdd: registrar,
-            ),
+            ActionInput(controller: controller, onAdd: registrar),
 
             const SizedBox(height: 20),
 
@@ -61,20 +58,20 @@ class _HistorialScreenState extends State<HistorialScreen> {
             ),
 
             const SizedBox(height: 10),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: deshacer,
-                  child: const Text("Deshacer"),
-                ),
-                ElevatedButton(
-                  onPressed: limpiar,
-                  child: const Text("Vaciar historial"),
-                ),
-              ],
-            ),
+            if (historial.isNotEmpty)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: deshacer,
+                    child: const Text("Deshacer"),
+                  ),
+                  ElevatedButton(
+                    onPressed: limpiar,
+                    child: const Text("Vaciar historial"),
+                  ),
+                ],
+              ),
 
             const SizedBox(height: 20),
 
@@ -88,7 +85,19 @@ class _HistorialScreenState extends State<HistorialScreen> {
                 itemCount: historial.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(historial[index].descripcion),
+                    title: Text(
+                      "${index + 1}. ${historial[index].descripcion}",
+                      style: TextStyle(
+                        fontSize: 20,
+                        backgroundColor: Color.fromARGB(
+                          Random().nextInt(255),
+                          Random().nextInt(255),
+                          Random().nextInt(255),
+                          Random().nextInt(255),
+                        ),
+                      ),
+                      strutStyle: const StrutStyle(height: 1.5, leading: 0.5),
+                    ),
                   );
                 },
               ),
