@@ -1,114 +1,111 @@
 import 'package:flutter/material.dart';
+import '../models/pilas.dart';
+import '../widget/action_input.dart';
 
-class HistorialPage extends StatefulWidget {
-  const HistorialPage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _HistorialPageState createState() => _HistorialPageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HistorialPageState extends State<HistorialPage> {
+class _HomeScreenState extends State<HomeScreen> {
 
-  List<String> pila = [];
-  TextEditingController accionController = TextEditingController();
+  final PilaService pila = PilaService();
+  final TextEditingController controller = TextEditingController();
 
-  void registrarAccion() {
-    if (accionController.text.isNotEmpty) {
+  void registrar() {
+    if (controller.text.isNotEmpty) {
       setState(() {
-        pila.add(accionController.text);
-        accionController.clear();
+        pila.push(controller.text);
+        controller.clear();
       });
     }
   }
 
-  void deshacerAccion() {
-    if (pila.isNotEmpty) {
-      setState(() {
-        pila.removeLast();
-      });
-    }
+  void deshacer() {
+    setState(() {
+      pila.pop();
+    });
   }
 
-  void vaciarHistorial() {
+  void limpiar() {
     setState(() {
       pila.clear();
     });
   }
 
-  String mostrarUltimaAccion() {
-    if (pila.isEmpty) {
-      return "No hay acciones";
-    }
-    return pila.last;
-  }
-
   @override
   Widget build(BuildContext context) {
+
+    final historial = pila.historial();
+    final ultima = pila.peek();
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Gestor de Historial"),
-      ),
+      appBar: AppBar(title: const Text("Gestor de Historial")),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
 
-            TextField(
-              controller: accionController,
-              decoration: InputDecoration(
-                labelText: "Nueva acción",
-                border: OutlineInputBorder(),
-              ),
+            ActionInput(
+              controller: controller,
+              onAdd: registrar,
             ),
 
-            SizedBox(height: 10),
-
-            ElevatedButton(
-              onPressed: registrarAccion,
-              child: Text("Registrar acción"),
-            ),
-
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             Text(
-              "Última acción: ${mostrarUltimaAccion()}",
-              style: TextStyle(fontSize: 18),
+              "Última acción: ${ultima?.descripcion ?? "Sin acciones"}",
+              style: const TextStyle(fontSize: 18),
             ),
 
-            SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
+            const SizedBox(height: 10),
+            if(historial.isNotEmpty)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
                 ElevatedButton(
-                  onPressed: deshacerAccion,
-                  child: Text("Deshacer"),
+                  onPressed: deshacer,
+                  child: const Text("Deshacer"),
                 ),
                 ElevatedButton(
-                  onPressed: vaciarHistorial,
-                  child: Text("Vaciar historial"),
+                  onPressed: limpiar,
+                  child: const Text("Vaciar historial"),
                 ),
               ],
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            Text(
-              "Historial:",
+            const Text(
+              "Historial",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
 
-            Expanded(
-              child: ListView.builder(
-                itemCount: pila.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(pila[pila.length - 1 - index]),
-                  );
-                },
-              ),
-            )
+           Expanded(
+            child: ListView.builder(
+              itemCount: historial.length,
+              itemBuilder: (context, index) {
+            return SizedBox(
+              width: 150,
+              height: 80,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              margin: const EdgeInsets.symmetric(vertical: 5),
+              decoration: BoxDecoration(
+              color: Colors.blue.shade100,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              historial[index].descripcion,
+              style: const TextStyle(fontSize: 16),
+          ),
+        ),
+      );
+    },
+  ),
+)
           ],
         ),
       ),

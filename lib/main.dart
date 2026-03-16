@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/historial_screen.dart';
+import 'package:labpilas/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.green,
       ),
-      home: HistorialScreen(),
+      home: HomeScreen(),
     );
   }
 }
